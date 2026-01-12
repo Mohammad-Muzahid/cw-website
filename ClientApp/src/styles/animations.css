@@ -1,0 +1,104 @@
+/* src/styles/animations.css */
+/* Woodwork-specific animations */
+
+@keyframes saw-move {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(20px) rotate(10deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes wood-rotate-3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: rotateX(10deg) rotateY(90deg);
+  }
+  50% {
+    transform: rotateX(0deg) rotateY(180deg);
+  }
+  75% {
+    transform: rotateX(-10deg) rotateY(270deg);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(360deg);
+  }
+}
+
+@keyframes carpenter-hammer {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-30deg);
+  }
+  75% {
+    transform: rotate(30deg);
+  }
+}
+
+.animate-saw {
+  animation: saw-move 2s ease-in-out infinite;
+}
+
+.animate-wood-rotate-3d {
+  animation: wood-rotate-3d 20s linear infinite;
+}
+
+.animate-hammer {
+  animation: carpenter-hammer 1s ease-in-out infinite;
+}
+
+/* Shimmer effect for wood */
+.shimmer-wood {
+  background: linear-gradient(
+    90deg,
+    rgba(139, 90, 43, 0) 0%,
+    rgba(139, 90, 43, 0.3) 50%,
+    rgba(139, 90, 43, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Horizontal scroll animation for gallery */
+@keyframes scrollGallery {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-300px * 4 - 30px * 4));
+  }
+}
+
+/* Pause animation on hover */
+.gallery-container:hover {
+  animation-play-state: paused;
+}
+
+/* For mobile horizontal scroll */
+@media (max-width: 768px) {
+  .gallery-container {
+    animation: scrollGallery 30s linear infinite;
+  }
+}
+
+/* For desktop hover pause effect */
+.gallery-item:hover ~ .gallery-item {
+  animation-play-state: paused;
+}

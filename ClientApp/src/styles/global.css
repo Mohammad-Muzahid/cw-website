@@ -1,0 +1,173 @@
+/* Import Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your existing global styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply bg-gray-900 text-white;
+  overflow-x: hidden;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Section Titles */
+.section-title {
+  @apply text-3xl md:text-4xl font-bold text-center mb-3 text-white;
+}
+
+.section-subtitle {
+  @apply text-center text-gray-300 mb-8 text-base;
+}
+
+/* Buttons */
+.btn {
+  @apply px-5 py-2.5 rounded-lg font-medium transition-all duration-300 inline-block no-underline;
+}
+
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-500 to-cyan-400 text-gray-900 hover:from-blue-600 hover:to-cyan-500 hover:shadow-lg;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 text-white hover:bg-gray-700;
+}
+
+.btn-outline {
+  @apply bg-transparent border border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-5 {
+  margin-top: 3rem;
+}
+
+/* Floating particles */
+.floating-particle {
+  @apply absolute rounded-full pointer-events-none z-0;
+}
+
+/* Card hover effects */
+.about-card:hover,
+.service-card:hover,
+.project-card:hover {
+  @apply -translate-y-2 shadow-xl transition-all duration-300;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Wood grain animation - USING GRADIENT INSTEAD OF IMAGE */
+@keyframes wood-grain {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 400px 400px;
+  }
+}
+
+.wood-grain-bg {
+  background: linear-gradient(
+    45deg,
+    rgba(139, 90, 43, 0.1) 0%,
+    rgba(93, 64, 55, 0.1) 25%,
+    rgba(62, 39, 35, 0.1) 50%,
+    rgba(93, 64, 55, 0.1) 75%,
+    rgba(139, 90, 43, 0.1) 100%
+  );
+  background-size: 400px 400px;
+  animation: wood-grain 20s linear infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #64B5F6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2196F3;
+}
+
+/* Tailwind Custom Utilities */
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+  
+  .text-gradient-wood {
+    @apply bg-gradient-to-r from-wood-600 via-wood-500 to-wood-400 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+  
+  .glass-effect-dark {
+    @apply backdrop-blur-md bg-black/30 border border-white/10;
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-title {
+    @apply text-2xl;
+  }
+  
+  .section-subtitle {
+    @apply text-sm;
+  }
+  
+  .btn {
+    @apply px-4 py-2 text-sm;
+  }
+}

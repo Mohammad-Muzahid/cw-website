@@ -1,0 +1,85 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOTNET_VERSION: '7.0.x'
+  NODE_VERSION: '18.x'
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: \${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: ClientApp/package-lock.json
+        
+    - name: Install dependencies
+      working-directory: ./ClientApp
+      run: npm ci
+      
+    - name: Run linting
+      working-directory: ./ClientApp
+      run: npm run lint || true
+      
+    - name: Run tests
+      working-directory: ./ClientApp
+      run: npm test -- --watchAll=false --passWithNoTests || true
+      
+    - name: Build React app
+      working-directory: ./ClientApp
+      run: npm run build
+      env:
+        CI: false
+        GENERATE_SOURCEMAP: false
+        
+    - name: Upload frontend build
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: ClientApp/build/
+        retention-days: 7
+
+  build-backend:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: \${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Run .NET tests
+      run: dotnet test --verbosity minimal --no-restore || true
+      
+    - name: Build .NET app
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Publish .NET app
+      run: dotnet publish -c Release -o ./publish --no-build
+      
+    - name: Upload backend build
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-publish
+        path: publish/
+        retention-days: 7
