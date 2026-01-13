@@ -7,52 +7,61 @@ on:
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ClientApp  # All frontend steps will run here
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18' # Changed from '\18.x' to a clean version string
+        node-version: '18'
 
-    - name: Install dependencies
-      run: npm ci
+    - name: Install frontend dependencies
+      working-directory: ./ClientApp
+      run: |
+        npm cache clean --force
+        npm ci --legacy-peer-deps
 
     - name: Build React app
+      working-directory: ./ClientApp
       run: npm run build
       env:
-        CI: false  # This prevents treating warnings as errors
+        CI: false
+        NODE_OPTIONS: '--max-old-space-size=4096'
+        GENERATE_SOURCEMAP: false
 
-    - name: Upload build artifact
+    - name: Upload frontend build artifact
       uses: actions/upload-artifact@v4
       with:
         name: frontend-build
         path: ClientApp/build/
+        retention-days: 5
 
   build-backend:
     runs-on: ubuntu-latest
-    needs: build-frontend # Ensures frontend builds first, but can run in parallel if you remove this
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '7.0' # Changed from '\7.0.x'
+        dotnet-version: '7.0'
 
-    - name: Build and Publish .NET app
-      run: |
-        dotnet restore
-        dotnet build --configuration Release --no-restore
-        dotnet publish -c Release -o ./publish
+    - name: Restore backend dependencies
+      run: dotnet restore
+
+    - name: Build .NET project
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish .NET app
+      run: dotnet publish -c Release -o ./publish
 
     - name: Upload backend artifact
       uses: actions/upload-artifact@v4
       with:
         name: backend-publish
         path: publish/
+        retention-days: 5
