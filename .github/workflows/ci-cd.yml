@@ -18,7 +18,9 @@ jobs:
         cache-dependency-path: ClientApp/package-lock.json
     - name: Install Dependencies
       working-directory: ./ClientApp
-      run: npm ci --legacy-peer-deps
+      run: |
+        # Use npm install instead of npm ci to handle version mismatches
+        npm install --legacy-peer-deps --no-audit --no-fund
     - name: Build React App
       working-directory: ./ClientApp
       run: CI=false npm run build
