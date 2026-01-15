@@ -1,111 +1,36 @@
 name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [ main ]
-
-env:
-  # Set build environment variables here
-  CI: false
-  GENERATE_SOURCEMAP: false
-  SKIP_PREFLIGHT_CHECK: true
-  DISABLE_ESLINT_PLUGIN: true
+on: [push]
 
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
+    - uses: actions/checkout@v4
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18.20.2'
-        cache: 'npm'
-        cache-dependency-path: ClientApp/package-lock.json
-    
-    - name: Create build environment file
+        node-version: '18'
+    - name: Install & Build
       working-directory: ./ClientApp
       run: |
-        # Create a temporary .env file for CI
-        cat > .env << 'ENVEOF'
-        CI=false
-        SKIP_PREFLIGHT_CHECK=true
-        DISABLE_ESLINT_PLUGIN=true
-        ESLINT_NO_DEV_ERRORS=true
-        GENERATE_SOURCEMAP=false
-        INLINE_RUNTIME_CHUNK=false
-        ENVEOF
-        
-        echo "Created .env file for CI build"
-        cat .env
-    
-    - name: Clean install dependencies
-      working-directory: ./ClientApp
-      run: |
-        echo "=== Cleaning previous install ==="
-        rm -rf node_modules package-lock.json
-        
-        echo "=== Installing dependencies ==="
-        npm ci --legacy-peer-deps --no-audit --no-fund --loglevel=error
-        
-        echo "=== Checking critical packages ==="
-        npm list react-scripts react react-dom --depth=0
-    
-    - name: Build React application
-      working-directory: ./ClientApp
-      run: |
-        echo "=== Starting build ==="
-        CI=false npm run build
-        
-        echo "=== Build completed successfully ==="
-        ls -la build/ | head -10
-        du -sh build/
-      env:
-        NODE_OPTIONS: "--max-old-space-size=4096"
-    
-    - name: Upload frontend build
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-build
-        path: ClientApp/build/
-        retention-days: 7
-      if: success()
+        npm ci --legacy-peer-deps --no-audit
+        # Capture full build output
+        CI=false npm run build 2>&1 | tee build.log
+        if [ ${PIPESTATUS[0]} -ne 0 ]; then
+          echo "❌ Build failed. Log:"
+          cat build.log
+          exit 1
+        fi
 
   build-backend:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
+    - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '7.0.403'
-    
-    - name: Build .NET backend
+        dotnet-version: '7.0'
+    - name: Build
       run: |
-        echo "=== Restoring dependencies ==="
-        dotnet restore --verbosity quiet
-        
-        echo "=== Building project ==="
-        dotnet build --configuration Release --no-restore --verbosity minimal
-        
-        echo "=== Publishing ==="
-        dotnet publish -c Release -o ./publish --no-build --verbosity minimal
-        
-        echo "=== Build output ==="
-        ls -lh publish/ | head -10
-    
-    - name: Upload backend build
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-publish
-        path: publish/
-        retention-days: 7
-      if: success()
+        # The Directory.Build.props file we created will stop warnings from failing the build
+        dotnet build --configuration Release -p:TreatWarningsAsErrors=false

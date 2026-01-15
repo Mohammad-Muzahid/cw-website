@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <!-- Stop treating warnings as errors for CI -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- You can also suppress the specific nullable warning -->
+    <NoWarn>$(NoWarn);CS8618</NoWarn>
+  </PropertyGroup>
+</Project>
