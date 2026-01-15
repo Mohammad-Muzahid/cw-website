@@ -2,6 +2,7 @@
   "name": "cw_website",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@react-three/drei": "^9.95.4",
     "@react-three/fiber": "^8.15.24",
@@ -25,20 +26,27 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "ajv": "8.12.0",
+    "ajv-keywords": "5.1.0",
     "cross-env": "^7.0.3",
     "eslint": "^8.56.0",
     "eslint-config-react-app": "^7.0.1",
-    "tailwindcss": "^3.3.5"
+    "postcss": "^8.4.31",
+    "schema-utils": "4.0.0",
+    "tailwindcss": "^3.3.5",
+    "typescript": "^4.9.5",
+    "webpack": "5.88.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "CI=false GENERATE_SOURCEMAP=false NODE_OPTIONS=\"--max-old-space-size=4096\" react-scripts build",
+    "build": "CI=false GENERATE_SOURCEMAP=false react-scripts build",
     "test": "cross-env CI=true react-scripts test --passWithNoTests",
-    "eject": "react-scripts eject",
-    "lint": "eslint src --ext .js,.jsx --quiet"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": ["react-app"],
+    "extends": [
+      "react-app"
+    ],
     "rules": {
       "no-unused-vars": "warn",
       "react-hooks/exhaustive-deps": "warn"
@@ -55,8 +63,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "overrides": {
-    "webpack": "5.81.0"
   }
 }
