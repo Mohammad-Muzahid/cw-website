@@ -23,7 +23,7 @@ const Hero = () => {
   const theme = {
     textBeige: '#f8f5ed',          // Light beige for text
     navy: '#0d1b2a',               // Deep navy for backgrounds/layers
-    accent: '#c9a86a',             // Warm gold accent
+    accent: '#f8f5ed',             // Warm gold accent
     lightAccent: '#e0cda9',        // Lighter gold
     white: '#ffffff',
     darkNavy: '#09111d'            // Darker navy for variations
@@ -57,7 +57,7 @@ const Hero = () => {
 
   // Transparency controls - Navigation is fully transparent
   const transparencyControls = {
-    imageOverlayOpacity: 0.9,      // Reduced for more background visibility
+    imageOverlayOpacity: 0.6,      // Reduced for more background visibility
     imageOverlayColor: theme.navy,
     desktopHeaderOpacity: 0,       // Fully transparent
     mobileHeaderOpacity: 0.1,      // Slightly visible on mobile
@@ -81,6 +81,11 @@ const Hero = () => {
     setMobileOpen(false);
   };
 
+  const handleProjectsClick = () => {
+    navigate('/projects/completed');
+    setMobileOpen(false);
+  };
+
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -96,7 +101,7 @@ const Hero = () => {
   // Menu items - now with proper routing
   const menuItems = [
     { label: 'Services', onClick: handleServicesClick },
-    { label: 'Projects', onClick: () => scrollToSection('projects') },
+    { label: 'Projects', onClick: handleProjectsClick }, // CHANGED: Now navigates to CompletedProjects
     { label: 'About', onClick: handleAboutClick },
     { label: 'Contact', onClick: () => scrollToSection('contact') }
   ];
@@ -231,7 +236,8 @@ const Hero = () => {
         overflow: 'hidden',
         paddingTop: '0',
         backgroundColor: theme.navy,
-        fontFamily: "'Cygre', serif", // Added Cygre font to entire section
+        fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for entire section
+        fontWeight: '800',
       }}
     >
       {/* BACKGROUND IMAGE */}
@@ -278,7 +284,8 @@ const Hero = () => {
           padding: '25px 40px',
           backgroundColor: `transparent`,
           backdropFilter: 'blur(0px)',
-          fontFamily: "'Cygre', serif", // Cygre font for navigation
+          fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for navigation
+          fontWeight: '800',
         }}
         className="desktop-nav-container"
       >
@@ -322,7 +329,8 @@ const Hero = () => {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontFamily: "'Cygre', serif", // Cygre font for menu buttons
+                fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for menu buttons
+                fontWeight: '800',
                 transition: 'all 0.3s ease',
               }}
               className="desktop-menu-button"
@@ -355,7 +363,8 @@ const Hero = () => {
               gap: '10px',
               transition: 'all 0.3s ease',
               backgroundColor: 'transparent',
-              fontFamily: "'Cygre', serif", // Cygre font for phone number
+              fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for phone number
+              fontWeight: '800',
               letterSpacing: '0.8px',
             }}
             className="desktop-contact-button"
@@ -380,7 +389,8 @@ const Hero = () => {
           padding: '16px 24px',
           backgroundColor: `${theme.navy}${Math.round(transparencyControls.mobileHeaderOpacity * 255).toString(16).padStart(2, '0')}`,
           backdropFilter: 'blur(10px)',
-          fontFamily: "'Cygre', serif", // Cygre font for mobile header
+          fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for mobile header
+          fontWeight: '800',
         }}
         className="mobile-header"
       >
@@ -406,7 +416,8 @@ const Hero = () => {
             border: 'none',
             padding: '8px',
             cursor: 'pointer',
-            fontFamily: "'Cygre', serif", // Cygre font for menu button
+            fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for menu button
+            fontWeight: '800',
           }}
           className="mobile-menu-button"
         >
@@ -428,7 +439,8 @@ const Hero = () => {
           display: 'flex',
           flexDirection: 'column',
           borderLeft: `1px solid ${theme.textBeige}20`,
-          fontFamily: "'Cygre', serif", // Cygre font for drawer
+          fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for drawer
+          fontWeight: '800',
         }}
         className="mobile-drawer"
         >
@@ -456,7 +468,8 @@ const Hero = () => {
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontFamily: "'Cygre', serif", // Cygre font for close button
+                fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for close button
+                fontWeight: '800',
               }}
             >
               <FaTimes size={20} />
@@ -485,7 +498,8 @@ const Hero = () => {
                   cursor: 'pointer',
                   borderBottom: `1px solid ${theme.textBeige}15`,
                   transition: 'all 0.3s ease',
-                  fontFamily: "'Cygre', serif", // Cygre font for drawer menu items
+                  fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for drawer menu items
+                  fontWeight: '800',
                   letterSpacing: '1px',
                 }}
                 className="drawer-menu-button"
@@ -515,7 +529,8 @@ const Hero = () => {
                   borderRadius: '4px',
                   backgroundColor: 'transparent',
                   transition: 'all 0.3s ease',
-                  fontFamily: "'Cygre', serif", // Cygre font for mobile phone button
+                  fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for mobile phone button
+                  fontWeight: '800',
                   letterSpacing: '0.8px',
                 }}
                 className="mobile-phone-button"
@@ -540,7 +555,8 @@ const Hero = () => {
             bottom: 0,
             backgroundColor: `rgba(13, 27, 42, ${transparencyControls.mobileOverlayOpacity})`,
             zIndex: 1999,
-            fontFamily: "'Cygre', serif", // Consistent font for overlay
+            fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for overlay
+            fontWeight: '800',
           }}
           className="mobile-overlay"
         />
@@ -562,10 +578,10 @@ const Hero = () => {
           justifyContent: 'center',
           minHeight: '100vh',
           maxWidth: 'none', // Remove maxWidth for corner alignment
-          fontFamily: "'Cygre', serif", // Cygre font for content container
+          fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for content container
         }}
       >
-        {/* Main Title with rotating word - Smaller font size */}
+        {/* Main Title with rotating word - CHANGED: Increased maxWidth to 1000px */}
         <h1
           ref={headingRef}
           style={{
@@ -574,9 +590,10 @@ const Hero = () => {
             marginBottom: '10px',
             lineHeight: 1,
             fontSize: fontSizes.desktop.title, // Using font size variable
-            fontFamily: "'Cygre', serif", // Cygre font for main title
+            fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for main title
+            fontWeight: '800',
             letterSpacing: '1.5px',
-            maxWidth: '800px',
+            maxWidth: '1000px', // CHANGED: Increased from 1000px to 1000px (already was 1000px, kept as is)
             textShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
           }}
           className="hero-title"
@@ -593,19 +610,21 @@ const Hero = () => {
               fontStyle: 'normal',
               letterSpacing: '1.5px',
               textShadow: '0 2px 15px rgba(201, 168, 106, 0.5)',
-              fontFamily: "'Cygre', serif", // Cygre font for rotating word
+              fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for rotating word
+              fontWeight: '800',
             }}
           >
             {titleWord}
           </span> {content.heroTitle}
         </h1>
         
-        {/* Tagline - Smaller font size */}
+        {/* Tagline */}
         <div
           ref={taglineRef}
           style={{
             marginTop: '5px',
-            fontFamily: "'Cygre', serif", // Cygre font for tagline container
+            fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for tagline container
+            fontWeight: '800',
           }}
         >
           <h2 style={{
@@ -613,7 +632,8 @@ const Hero = () => {
             fontWeight: 300,
             lineHeight: 1.2,
             fontSize: fontSizes.desktop.tagline, // Using font size variable
-            fontFamily: "'Cygre', serif", // Cygre font for tagline
+            fontFamily: "'Cygre', sans-serif", // ADDED: Cygre font for tagline
+            fontWeight: '500',
             letterSpacing: '2px',
             textTransform: 'uppercase',
             fontStyle: 'normal',
@@ -634,7 +654,7 @@ const Hero = () => {
         
         /* Apply Cygre font to all text elements */
         * {
-          font-family: 'Cygre', serif;
+          font-family: 'Cygre', sans-serif;
         }
         
         /* Default: Show mobile, hide desktop */
@@ -698,20 +718,21 @@ const Hero = () => {
           /* Responsive typography for desktop - USING FONT SIZE VARIABLES */
           .hero-title {
             font-size: ${fontSizes.desktop.title} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
+            max-width: 1000px !important; /* CHANGED: Ensured width is set */
           }
           
           .hero-tagline {
             font-size: ${fontSizes.desktop.tagline} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .desktop-menu-button {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .desktop-contact-button {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
         }
         
@@ -719,12 +740,13 @@ const Hero = () => {
         @media (min-width: 1024px) {
           .hero-title {
             font-size: ${fontSizes.desktop.title} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
+            max-width: 1000px !important; /* CHANGED: Ensured width is set */
           }
           
           .hero-tagline {
             font-size: ${fontSizes.desktop.tagline} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
         }
         
@@ -732,12 +754,13 @@ const Hero = () => {
         @media (max-width: 1023px) and (min-width: 768px) {
           .hero-title {
             font-size: ${fontSizes.tablet.title} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
+            max-width: 800px !important; /* Adjusted for tablet */
           }
           
           .hero-tagline {
             font-size: ${fontSizes.tablet.tagline} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           [ref="contentRef"] {
@@ -746,13 +769,13 @@ const Hero = () => {
           
           .desktop-menu-button {
             font-size: ${fontSizes.tablet.menu} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .desktop-contact-button {
             font-size: ${fontSizes.tablet.phone} !important;
             padding: 10px 20px !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
         }
         
@@ -761,14 +784,15 @@ const Hero = () => {
           .hero-title {
             font-size: ${fontSizes.mobile.title} !important;
             margin-top: 100px !important;
-            letter-spacing: 1.2px !important;
-            font-family: 'Cygre', serif !important;
+            letterSpacing: 1.2px !important;
+            font-family: 'Cygre', sans-serif !important;
+            max-width: 100% !important; /* Full width on mobile */
           }
           
           .hero-tagline {
             font-size: ${fontSizes.mobile.tagline} !important;
             letter-spacing: 1.5px !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           /* Left-corner aligned content on mobile */
@@ -780,29 +804,29 @@ const Hero = () => {
           .desktop-menu-button {
             font-size: ${fontSizes.mobile.menu} !important;
             letter-spacing: 1px !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .desktop-contact-button {
             padding: 8px 16px !important;
             font-size: ${fontSizes.mobile.phone} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .mobile-header {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .mobile-drawer {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .drawer-menu-button {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           .mobile-phone-button {
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
         }
         
@@ -810,12 +834,13 @@ const Hero = () => {
         @media (max-width: 480px) {
           .hero-title {
             font-size: ${fontSizes.smallMobile.title} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
+            max-width: 100% !important; /* Full width on small mobile */
           }
           
           .hero-tagline {
             font-size: ${fontSizes.smallMobile.tagline} !important;
-            font-family: 'Cygre', serif !important;
+            font-family: 'Cygre', sans-serif !important;
           }
           
           [ref="contentRef"] {
@@ -871,7 +896,7 @@ const Hero = () => {
         /* Smooth text animation for rotating word */
         .title-word {
           transition: opacity 0.5s ease, transform 0.5s ease;
-          font-family: 'Cygre', serif !important;
+          font-family: 'Cygre', sans-serif !important;
         }
       `}</style>
     </section>

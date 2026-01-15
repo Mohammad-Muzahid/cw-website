@@ -454,29 +454,22 @@ const AboutPage = () => {
         }}>
           <div className="hero-container" style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div className="hero-content" style={{ marginBottom: isMobile ? '30px' : '50px' }}>
-              <div className="arabic-name" style={{
-                color: theme.medium,
-                fontSize: isMobile ? '1.2rem' : '2rem',
-                fontWeight: '700',
-                marginBottom: isMobile ? '10px' : '15px',
-                fontFamily: "'Cygre', sans-serif",
-                letterSpacing: '1px'
+              {/* Logo instead of Arabic name - Centered and larger */}
+              <div className="logo-container" style={{
+                marginBottom: isMobile ? '30px' : '40px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }}>
-                {companyData.arabicName}
+                <img 
+                  src="/images/cw-logo2.png" 
+                  alt="CW Woodworks" 
+                  style={{ 
+                    width: isMobile ? '450px' : '650px', // INCREASED SIZE HERE - You can change these values
+                    height: 'auto',
+                  }} 
+                />
               </div>
-              
-              <h1 ref={titleRef} className="main-title" style={{
-                fontSize: isMobile ? '2rem' : '3.5rem',
-                fontWeight: '900',
-                marginBottom: isMobile ? '15px' : '25px',
-                color: theme.dark,
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                fontFamily: "'Cygre', sans-serif",
-                lineHeight: 1.1
-              }}>
-                {companyData.name}
-              </h1>
               
               <div className="title-divider" style={{
                 height: '3px',
@@ -519,20 +512,10 @@ const AboutPage = () => {
                   marginBottom: '20px',
                   textTransform: 'uppercase',
                   letterSpacing: '1px',
-                  position: 'relative',
-                  paddingBottom: '15px',
-                  fontFamily: "'Cygre', sans-serif"
+                  fontFamily: "'Cygre', sans-serif",
+                  textAlign: 'left' // Align to left as requested
                 }}>
                   <span style={{ color: theme.medium }}>Company</span> Overview
-                  <div className="title-underline" style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    width: '60px',
-                    height: '3px',
-                    background: theme.medium,
-                    borderRadius: '2px'
-                  }} />
                 </h2>
                 
                 <div className="overview-text" style={{

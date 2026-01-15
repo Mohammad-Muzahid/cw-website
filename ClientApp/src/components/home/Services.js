@@ -19,7 +19,6 @@ const theme = {
 const services = [
   {
     id: 1,
-    number: "01",
     title: "Design & Consultation",
     icon: "FaPenAlt",
     shortDesc: "Complete design solutions",
@@ -36,7 +35,6 @@ const services = [
   },
   {
     id: 2,
-    number: "02",
     title: "Precision Fabrication",
     icon: "FaTools",
     shortDesc: "Precision fabrication",
@@ -53,7 +51,6 @@ const services = [
   },
   {
     id: 3,
-    number: "03",
     title: "Professional Finishing",
     icon: "FaPaintRoller",
     shortDesc: "Professional finishing",
@@ -70,7 +67,6 @@ const services = [
   },
   {
     id: 4,
-    number: "04",
     title: "Installation Services",
     icon: "FaHardHat",
     shortDesc: "Professional installation",
@@ -87,7 +83,6 @@ const services = [
   },
   {
     id: 5,
-    number: "05",
     title: "Project Management",
     icon: "FaUserTie",
     shortDesc: "End-to-end coordination",
@@ -169,13 +164,13 @@ const Services = () => {
       
       // Determine size based on both width and height
       if (width <= 768 || height <= 700) {
-        setContainerSize(500);
+        setContainerSize(450); // Reduced from 500 for better mobile fit
         setIsMobile(true);
       } else if (width <= 992) {
-        setContainerSize(700);
+        setContainerSize(650); // Reduced from 700 for better tablet fit
         setIsMobile(false);
       } else if (width <= 1200) {
-        setContainerSize(800);
+        setContainerSize(750); // Reduced from 800 for better medium desktop fit
         setIsMobile(false);
       } else {
         setContainerSize(900);
@@ -210,26 +205,44 @@ const Services = () => {
     };
   }, []);
 
-  // Calculate responsive values
+  // Calculate responsive values with better mobile adjustments
   const responsive = React.useMemo(() => {
     const scale = containerSize / 900;
     const width = window.innerWidth;
     const height = window.innerHeight;
     const isSmallMobile = width <= 480 || height <= 600;
+    const isVerySmallMobile = width <= 360;
+    
+    // Adjust scaling for mobile
+    const mobileScale = isMobile ? 0.5 : scale;
     
     return {
       containerSize: containerSize,
-      centerSize: Math.max(isSmallMobile ? 120 : 150, 300 * scale),
-      circleSize: Math.max(isSmallMobile ? 90 : 110, 180 * scale),
-      radius: Math.max(isSmallMobile ? 150 : 180, 320 * scale),
+      centerSize: isMobile 
+        ? Math.max(isVerySmallMobile ? 100 : 120, 250 * mobileScale)
+        : Math.max(isSmallMobile ? 120 : 150, 300 * scale),
+      circleSize: isMobile
+        ? Math.max(isVerySmallMobile ? 60 : 70, 140 * mobileScale)
+        : Math.max(isSmallMobile ? 90 : 110, 180 * scale),
+      radius: isMobile
+        ? Math.max(isVerySmallMobile ? 120 : 140, 250 * mobileScale)
+        : Math.max(isSmallMobile ? 150 : 180, 320 * scale),
       fontSize: {
-        title: Math.max(1.2, 2.5 * scale) + 'rem',
-        serviceTitle: Math.max(0.8, 1.3 * scale) + 'rem',
-        centerTitle: Math.max(0.9, 1.8 * scale) + 'rem'
+        title: isMobile 
+          ? Math.max(0.9, 1.8 * mobileScale) + 'rem'
+          : Math.max(1.2, 2.5 * scale) + 'rem',
+        serviceTitle: isMobile
+          ? Math.max(0.6, 0.9 * mobileScale) + 'rem'
+          : Math.max(0.8, 1.3 * scale) + 'rem',
+        centerTitle: isMobile
+          ? Math.max(0.7, 1.2 * mobileScale) + 'rem'
+          : Math.max(0.9, 1.8 * scale) + 'rem'
       },
-      isSmallMobile
+      isSmallMobile,
+      isVerySmallMobile,
+      isMobile
     };
-  }, [containerSize]);
+  }, [containerSize, isMobile]);
 
   // Calculate position based on angle
   const calculatePosition = useCallback((angle, radius) => {
@@ -413,6 +426,9 @@ const Services = () => {
 
   // Handle circle hover
   const handleCircleHover = useCallback((index) => {
+    // Don't show hover overlay on mobile
+    if (isMobile) return;
+    
     setHoveredCircle(index);
     
     const circle = circleRefs.current[index];
@@ -453,10 +469,12 @@ const Services = () => {
         rotationTweenRef.current.pause();
       }
     }
-  }, []);
+  }, [isMobile]);
 
   // Handle circle leave
   const handleCircleLeave = useCallback(() => {
+    if (isMobile) return;
+    
     setHoveredCircle(null);
     
     circleRefs.current.forEach((circle, index) => {
@@ -489,14 +507,29 @@ const Services = () => {
 
   // Handle circle click
   const handleCircleClick = useCallback((service) => {
-    navigate('/services', { 
-      state: { 
-        selectedService: service.id.toString(),
-        serviceName: service.title,
-        serviceColor: service.color
-      }
-    });
-  }, [navigate]);
+    // On mobile, navigate directly without hover state
+    if (isMobile) {
+      navigate('/services', { 
+        state: { 
+          selectedService: service.id.toString(),
+          serviceName: service.title,
+          serviceColor: service.color
+        }
+      });
+    } else {
+      // On desktop, show hover effect briefly before navigation
+      handleCircleHover(services.findIndex(s => s.id === service.id));
+      setTimeout(() => {
+        navigate('/services', { 
+          state: { 
+            selectedService: service.id.toString(),
+            serviceName: service.title,
+            serviceColor: service.color
+          }
+        });
+      }, 300);
+    }
+  }, [navigate, isMobile, handleCircleHover]);
 
   // Handle "Explore" button click
   const handleExploreClick = useCallback((service, e) => {
@@ -581,8 +614,8 @@ const Services = () => {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 2,
-          maxWidth: '90vw',
-          maxHeight: '90vh',
+          maxWidth: responsive.isMobile ? '95vw' : '90vw',
+          maxHeight: responsive.isMobile ? '95vh' : '90vh',
           transform: 'translateZ(0)',
           margin: '0 auto'
         }}
@@ -597,7 +630,7 @@ const Services = () => {
             height: `${responsive.centerSize}px`,
             borderRadius: '50%',
             backgroundColor: theme.charcoal,
-            border: `4px solid ${theme.accent}`,
+            border: `${responsive.isMobile ? '3px' : '4px'} solid ${theme.accent}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -605,7 +638,7 @@ const Services = () => {
             zIndex: 15,
             boxShadow: '0 20px 50px rgba(30, 37, 47, 0.4)',
             transform: 'scale(0)',
-            padding: `${Math.min(responsive.centerSize * 0.12, 30)}px`,
+            padding: `${Math.min(responsive.centerSize * 0.12, responsive.isMobile ? 12 : 30)}px`,
             cursor: 'default'
           }}
         >
@@ -614,7 +647,7 @@ const Services = () => {
             fontSize: responsive.fontSize.centerTitle,
             fontWeight: '700',
             textTransform: 'uppercase',
-            letterSpacing: '2px',
+            letterSpacing: responsive.isMobile ? '1px' : '2px',
             textAlign: 'center',
             margin: 0,
             fontFamily: "'Cygre', sans-serif",
@@ -623,15 +656,15 @@ const Services = () => {
             Our<br />Services
           </h2>
           <div className="center-divider" style={{
-            width: `${Math.min(responsive.centerSize * 0.23, 60)}px`,
-            height: '4px',
+            width: `${Math.min(responsive.centerSize * 0.23, responsive.isMobile ? 40 : 60)}px`,
+            height: responsive.isMobile ? '3px' : '4px',
             backgroundColor: theme.accent,
-            margin: `${Math.min(responsive.centerSize * 0.06, 15)}px 0`,
+            margin: `${Math.min(responsive.centerSize * 0.06, responsive.isMobile ? 8 : 15)}px 0`,
             borderRadius: '2px'
           }} />
           <p className="center-description" style={{
             color: `${theme.beige}cc`,
-            fontSize: `${Math.min(responsive.centerSize * 0.035, 14)}px`,
+            fontSize: `${Math.min(responsive.centerSize * 0.035, responsive.isMobile ? 10 : 14)}px`,
             textAlign: 'center',
             margin: 0,
             fontFamily: "'Cygre', sans-serif",
@@ -657,7 +690,7 @@ const Services = () => {
               height: `${responsive.circleSize}px`,
               borderRadius: '50%',
               backgroundColor: theme.beige,
-              border: `3px solid ${service.color}`,
+              border: `${responsive.isMobile ? '2px' : '3px'} solid ${service.color}`,
               cursor: 'pointer',
               zIndex: hoveredCircle === index ? 100 : 10,
               transform: 'translate(0px, 0px)',
@@ -690,41 +723,17 @@ const Services = () => {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: `${Math.min(responsive.circleSize * 0.12, 20)}px`,
+              padding: `${Math.min(responsive.circleSize * 0.12, responsive.isMobile ? 12 : 20)}px`,
               backgroundColor: `${theme.beige}dd`,
               transition: 'all 0.3s ease'
             }}>
-              {/* Number */}
-              <div className="circle-number" style={{
-                position: 'absolute',
-                top: `${Math.min(responsive.circleSize * 0.08, 10)}px`,
-                left: `${Math.min(responsive.circleSize * 0.08, 10)}px`,
-                backgroundColor: `${theme.charcoal}10`,
-                border: `2px solid ${service.color}40`,
-                borderRadius: '50%',
-                width: `${Math.min(responsive.circleSize * 0.19, 30)}px`,
-                height: `${Math.min(responsive.circleSize * 0.19, 30)}px`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <span className="number-text" style={{
-                  color: theme.charcoal,
-                  fontSize: `${Math.min(responsive.circleSize * 0.06, 12)}px`,
-                  fontWeight: '700',
-                  fontFamily: "'Cygre', sans-serif"
-                }}>
-                  {service.number}
-                </span>
-              </div>
-
               {/* Icon */}
               <div className="circle-icon" style={{
                 color: service.color,
-                fontSize: `${Math.min(responsive.circleSize * 0.17, 24)}px`,
-                marginBottom: `${Math.min(responsive.circleSize * 0.08, 10)}px`,
+                fontSize: `${Math.min(responsive.circleSize * 0.17, responsive.isMobile ? 18 : 24)}px`,
+                marginBottom: `${Math.min(responsive.circleSize * 0.08, responsive.isMobile ? 6 : 10)}px`,
                 transition: 'all 0.3s ease',
-                transform: hoveredCircle === index ? 'scale(1.2) translateY(-8px)' : 'scale(1)'
+                transform: hoveredCircle === index && !isMobile ? 'scale(1.2) translateY(-8px)' : 'scale(1)'
               }}>
                 {getIconComponent(service.icon)}
               </div>
@@ -734,129 +743,131 @@ const Services = () => {
                 color: theme.charcoal,
                 fontSize: responsive.fontSize.serviceTitle,
                 fontWeight: '700',
-                marginBottom: `${Math.min(responsive.circleSize * 0.04, 6)}px`,
+                marginBottom: `${Math.min(responsive.circleSize * 0.04, responsive.isMobile ? 4 : 6)}px`,
                 textAlign: 'center',
                 fontFamily: "'Cygre', sans-serif",
                 lineHeight: 1.2,
                 transition: 'all 0.3s ease',
-                transform: hoveredCircle === index ? 'translateY(-4px)' : 'translateY(0)'
+                transform: hoveredCircle === index && !isMobile ? 'translateY(-4px)' : 'translateY(0)'
               }}>
                 {service.title}
               </h3>
 
-              {/* Short Description */}
+              {/* Short Description - Always visible on mobile, hides on desktop hover */}
               <p className="circle-desc" style={{
                 color: `${theme.charcoal}cc`,
-                fontSize: `${Math.min(responsive.circleSize * 0.05, 10)}px`,
+                fontSize: `${Math.min(responsive.circleSize * 0.05, responsive.isMobile ? 8 : 10)}px`,
                 textAlign: 'center',
                 marginBottom: '0',
                 fontFamily: "'Cygre', sans-serif",
                 fontWeight: 300,
                 lineHeight: 1.4,
-                opacity: hoveredCircle === index ? 0 : 1,
+                opacity: (isMobile || hoveredCircle !== index) ? 1 : 0,
                 transition: 'opacity 0.3s ease'
               }}>
                 {service.shortDesc}
               </p>
 
-              {/* Hover Overlay with Content */}
-              <div className="circle-overlay" style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: `${theme.charcoal}ee`,
-                color: theme.beige,
-                padding: `${Math.min(responsive.circleSize * 0.14, 18)}px`,
-                opacity: hoveredCircle === index ? 1 : 0,
-                transition: 'all 0.3s ease',
-                display: responsive.isSmallMobile ? 'none' : 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                transform: hoveredCircle === index ? 'scale(1)' : 'scale(0.9)'
-              }}>
-                <h4 className="overlay-title" style={{
-                  fontSize: responsive.fontSize.serviceTitle,
-                  fontWeight: '700',
-                  marginBottom: `${Math.min(responsive.circleSize * 0.07, 10)}px`,
-                  textAlign: 'center',
-                  fontFamily: "'Cygre', sans-serif",
-                  color: service.color
+              {/* Hover Overlay with Content - Hidden on mobile */}
+              {!isMobile && (
+                <div className="circle-overlay" style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: `${theme.charcoal}ee`,
+                  color: theme.beige,
+                  padding: `${Math.min(responsive.circleSize * 0.14, 18)}px`,
+                  opacity: hoveredCircle === index ? 1 : 0,
+                  transition: 'all 0.3s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  transform: hoveredCircle === index ? 'scale(1)' : 'scale(0.9)'
                 }}>
-                  {service.title}
-                </h4>
-                
-                <p className="overlay-description" style={{
-                  fontSize: `${Math.min(responsive.circleSize * 0.047, 10)}px`,
-                  lineHeight: 1.4,
-                  textAlign: 'center',
-                  marginBottom: `${Math.min(responsive.circleSize * 0.08, 12)}px`,
-                  fontFamily: "'Cygre', sans-serif",
-                  fontWeight: 300
-                }}>
-                  {service.description}
-                </p>
-                
-                <div className="overlay-features" style={{
-                  fontSize: `${Math.min(responsive.circleSize * 0.042, 9)}px`,
-                  lineHeight: 1.3,
-                  textAlign: 'left',
-                  marginBottom: `${Math.min(responsive.circleSize * 0.11, 16)}px`,
-                  fontFamily: "'Cygre', sans-serif",
-                  fontWeight: 300
-                }}>
-                  {service.features.slice(0, 3).map((feature, idx) => (
-                    <div key={idx} className="feature-item" style={{ marginBottom: `${Math.min(responsive.circleSize * 0.03, 5)}px`, display: 'flex', alignItems: 'flex-start' }}>
-                      <span className="feature-dot" style={{ 
-                        color: service.color, 
-                        marginRight: '6px',
-                        fontSize: `${Math.min(responsive.circleSize * 0.06, 12)}px`,
-                        lineHeight: 1
-                      }}>•</span>
-                      <span className="feature-text">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <button
-                  onClick={(e) => handleExploreClick(service, e)}
-                  className="explore-button"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    color: theme.beige,
-                    fontWeight: '600',
+                  <h4 className="overlay-title" style={{
+                    fontSize: responsive.fontSize.serviceTitle,
+                    fontWeight: '700',
+                    marginBottom: `${Math.min(responsive.circleSize * 0.07, 10)}px`,
+                    textAlign: 'center',
+                    fontFamily: "'Cygre', sans-serif",
+                    color: service.color
+                  }}>
+                    {service.title}
+                  </h4>
+                  
+                  <p className="overlay-description" style={{
                     fontSize: `${Math.min(responsive.circleSize * 0.047, 10)}px`,
-                    padding: `${Math.min(responsive.circleSize * 0.04, 6)}px ${Math.min(responsive.circleSize * 0.11, 16)}px`,
-                    borderRadius: '20px',
-                    border: `2px solid ${service.color}`,
-                    backgroundColor: service.color,
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer',
-                    fontFamily: "'Cygre', sans-serif"
-                  }}
-                >
-                  <span>Explore</span>
-                  <FaArrowRight size={Math.min(responsive.circleSize * 0.07, 12)} />
-                </button>
-              </div>
+                    lineHeight: 1.4,
+                    textAlign: 'center',
+                    marginBottom: `${Math.min(responsive.circleSize * 0.08, 12)}px`,
+                    fontFamily: "'Cygre', sans-serif",
+                    fontWeight: 300
+                  }}>
+                    {service.description}
+                  </p>
+                  
+                  <div className="overlay-features" style={{
+                    fontSize: `${Math.min(responsive.circleSize * 0.042, 9)}px`,
+                    lineHeight: 1.3,
+                    textAlign: 'left',
+                    marginBottom: `${Math.min(responsive.circleSize * 0.11, 16)}px`,
+                    fontFamily: "'Cygre', sans-serif",
+                    fontWeight: 300
+                  }}>
+                    {service.features.slice(0, 3).map((feature, idx) => (
+                      <div key={idx} className="feature-item" style={{ marginBottom: `${Math.min(responsive.circleSize * 0.03, 5)}px`, display: 'flex', alignItems: 'flex-start' }}>
+                        <span className="feature-dot" style={{ 
+                          color: service.color, 
+                          marginRight: '6px',
+                          fontSize: `${Math.min(responsive.circleSize * 0.06, 12)}px`,
+                          lineHeight: 1
+                        }}>•</span>
+                        <span className="feature-text">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button
+                    onClick={(e) => handleExploreClick(service, e)}
+                    className="explore-button"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      color: theme.beige,
+                      fontWeight: '600',
+                      fontSize: `${Math.min(responsive.circleSize * 0.047, 10)}px`,
+                      padding: `${Math.min(responsive.circleSize * 0.04, 6)}px ${Math.min(responsive.circleSize * 0.11, 16)}px`,
+                      borderRadius: '20px',
+                      border: `2px solid ${service.color}`,
+                      backgroundColor: service.color,
+                      transition: 'all 0.2s ease',
+                      cursor: 'pointer',
+                      fontFamily: "'Cygre', sans-serif"
+                    }}
+                  >
+                    <span>Explore</span>
+                    <FaArrowRight size={Math.min(responsive.circleSize * 0.07, 12)} />
+                  </button>
+                </div>
+              )}
             </div>
 
-            {/* Connecting line to center */}
+            {/* Connecting line to center - Thinner on mobile */}
             <div className="connecting-line" style={{
               position: 'absolute',
               top: '50%',
               left: '50%',
               width: `${responsive.radius}px`,
-              height: '2px',
+              height: responsive.isMobile ? '1px' : '2px',
               backgroundColor: `${service.color}30`,
               transformOrigin: '0 0',
               zIndex: -1,
-              opacity: hoveredCircle === index ? 0.5 : 0.2,
+              opacity: hoveredCircle === index && !isMobile ? 0.5 : 0.2,
               transition: 'opacity 0.3s ease'
             }} />
           </div>
@@ -917,17 +928,19 @@ const Services = () => {
           contain: layout style paint;
         }
         
-        /* Hover effects */
-        .service-circle:hover {
-          box-shadow: 
-            0 25px 50px ${theme.charcoal}40,
-            0 0 0 3px ${theme.accent},
-            0 0 40px ${theme.accent}50 !important;
-        }
-        
-        .explore-button:hover {
-          background-color: ${theme.lightAccent} !important;
-          transform: scale(1.05);
+        /* Hover effects - Only on desktop */
+        @media (min-width: 769px) {
+          .service-circle:hover {
+            box-shadow: 
+              0 25px 50px ${theme.charcoal}40,
+              0 0 0 3px ${theme.accent},
+              0 0 40px ${theme.accent}50 !important;
+          }
+          
+          .explore-button:hover {
+            background-color: ${theme.lightAccent} !important;
+            transform: scale(1.05);
+          }
         }
         
         /* Pulsing animation for center circle */
@@ -947,36 +960,38 @@ const Services = () => {
         /* Mobile responsive */
         @media (max-width: 768px) {
           .services-section {
-            padding: 20px !important;
+            padding: 10px !important;
             min-height: 100vh !important;
             overflow: hidden !important;
           }
           
           .services-container {
-            width: 500px !important;
-            height: 500px !important;
-            max-width: 90vw !important;
-            max-height: 90vw !important;
+            width: 450px !important;
+            height: 450px !important;
+            max-width: 95vw !important;
+            max-height: 95vw !important;
             margin: 0 auto !important;
           }
           
           .center-circle {
-            width: 150px !important;
-            height: 150px !important;
-            padding: 15px !important;
+            width: 120px !important;
+            height: 120px !important;
+            padding: 12px !important;
           }
           
           .center-title {
-            font-size: 1.2rem !important;
+            font-size: 1rem !important;
+            letter-spacing: 0.8px !important;
           }
           
           .center-description {
             font-size: 0.6rem !important;
+            line-height: 1.2 !important;
           }
           
           .service-circle {
-            width: 100px !important;
-            height: 100px !important;
+            width: 70px !important;
+            height: 70px !important;
           }
           
           .circle-overlay {
@@ -985,32 +1000,22 @@ const Services = () => {
           
           .circle-desc {
             opacity: 1 !important;
-            font-size: 0.7rem !important;
+            font-size: 0.65rem !important;
+            line-height: 1.2 !important;
+          }
+          
+          .circle-title {
+            font-size: 0.75rem !important;
+            margin-bottom: 3px !important;
+          }
+          
+          .circle-icon {
+            font-size: 1.2rem !important;
+            margin-bottom: 4px !important;
           }
         }
         
         @media (max-width: 576px) {
-          .services-container {
-            width: 450px !important;
-            height: 450px !important;
-          }
-          
-          .center-circle {
-            width: 130px !important;
-            height: 130px !important;
-          }
-          
-          .center-title {
-            font-size: 1rem !important;
-          }
-          
-          .service-circle {
-            width: 90px !important;
-            height: 90px !important;
-          }
-        }
-        
-        @media (max-width: 480px) {
           .services-container {
             width: 400px !important;
             height: 400px !important;
@@ -1019,7 +1024,6 @@ const Services = () => {
           .center-circle {
             width: 110px !important;
             height: 110px !important;
-            padding: 10px !important;
           }
           
           .center-title {
@@ -1027,12 +1031,20 @@ const Services = () => {
           }
           
           .service-circle {
-            width: 80px !important;
-            height: 80px !important;
+            width: 65px !important;
+            height: 65px !important;
+          }
+          
+          .circle-title {
+            font-size: 0.7rem !important;
+          }
+          
+          .circle-desc {
+            font-size: 0.6rem !important;
           }
         }
         
-        @media (max-width: 400px) {
+        @media (max-width: 480px) {
           .services-container {
             width: 350px !important;
             height: 350px !important;
@@ -1041,15 +1053,78 @@ const Services = () => {
           .center-circle {
             width: 100px !important;
             height: 100px !important;
+            padding: 10px !important;
           }
           
           .center-title {
             font-size: 0.8rem !important;
           }
           
+          .center-description {
+            font-size: 0.55rem !important;
+          }
+          
           .service-circle {
-            width: 70px !important;
-            height: 70px !important;
+            width: 60px !important;
+            height: 60px !important;
+          }
+          
+          .circle-title {
+            font-size: 0.65rem !important;
+          }
+          
+          .circle-desc {
+            font-size: 0.55rem !important;
+          }
+          
+          .circle-icon {
+            font-size: 1rem !important;
+          }
+        }
+        
+        @media (max-width: 400px) {
+          .services-container {
+            width: 320px !important;
+            height: 320px !important;
+          }
+          
+          .center-circle {
+            width: 90px !important;
+            height: 90px !important;
+          }
+          
+          .center-title {
+            font-size: 0.75rem !important;
+          }
+          
+          .service-circle {
+            width: 55px !important;
+            height: 55px !important;
+          }
+          
+          .circle-title {
+            font-size: 0.6rem !important;
+          }
+          
+          .circle-desc {
+            font-size: 0.5rem !important;
+          }
+        }
+        
+        @media (max-width: 360px) {
+          .services-container {
+            width: 300px !important;
+            height: 300px !important;
+          }
+          
+          .center-circle {
+            width: 85px !important;
+            height: 85px !important;
+          }
+          
+          .service-circle {
+            width: 50px !important;
+            height: 50px !important;
           }
         }
         
@@ -1059,7 +1134,7 @@ const Services = () => {
           }
           
           .services-container {
-            max-height: 80vh !important;
+            max-height: 85vh !important;
           }
         }
         
@@ -1080,6 +1155,12 @@ const Services = () => {
           
           .circle-desc {
             opacity: 1 !important;
+          }
+          
+          /* Tap highlight color */
+          .service-circle:active {
+            background-color: ${theme.beige} !important;
+            transform: scale(0.95) !important;
           }
         }
         

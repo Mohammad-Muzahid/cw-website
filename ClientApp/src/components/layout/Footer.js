@@ -1,6 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaTwitter, FaLinkedin, FaInstagram, FaPhone, FaEnvelope, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
+import { 
+  FaFacebook, 
+  FaWhatsapp, 
+  FaLinkedin, 
+  FaInstagram, 
+  FaTiktok,
+  FaPhone, 
+  FaEnvelope, 
+  FaMapMarkerAlt, 
+  FaArrowRight 
+} from 'react-icons/fa';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -24,6 +34,40 @@ const Footer = () => {
       address: "Jeddah, Saudi Arabia"
     }
   };
+
+  // Social media links - Updated with WhatsApp and TikTok
+  const socialMedia = [
+    { 
+      icon: <FaFacebook />, 
+      name: 'Facebook',
+      href: 'https://facebook.com/comprehensivewoodwork',
+      color: '#1877F2'
+    },
+    { 
+      icon: <FaWhatsapp />, 
+      name: 'WhatsApp',
+      href: 'https://wa.me/966560966096',
+      color: '#25D366'
+    },
+    { 
+      icon: <FaInstagram />, 
+      name: 'Instagram',
+      href: 'https://instagram.com/comprehensivewoodwork',
+      color: '#E4405F'
+    },
+    { 
+      icon: <FaTiktok />, 
+      name: 'TikTok',
+      href: 'https://tiktok.com/@comprehensivewoodwork',
+      color: '#000000'
+    },
+    { 
+      icon: <FaLinkedin />, 
+      name: 'LinkedIn',
+      href: 'https://linkedin.com/company/comprehensive-woodwork',
+      color: '#0A66C2'
+    }
+  ];
 
   // Format for links
   const formattedPhone = content.contact.phone.replace(/[\s\-()]/g, '');
@@ -97,44 +141,81 @@ const Footer = () => {
             }}>
               {content.tagline}
             </p>
-            <div style={{ display: 'flex', gap: '15px' }}>
-              {[
-                { icon: <FaFacebook />, href: 'https://facebook.com' },
-                { icon: <FaTwitter />, href: 'https://twitter.com' },
-                { icon: <FaLinkedin />, href: 'https://linkedin.com' },
-                { icon: <FaInstagram />, href: 'https://instagram.com' }
-              ].map((social, index) => (
+            
+            {/* Social Media Icons - Updated with WhatsApp and TikTok */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {socialMedia.map((social, index) => (
                 <a 
                   key={index}
                   href={social.href} 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  aria-label={`Follow us on ${social.name}`}
                   style={{
                     backgroundColor: `${theme.beige}15`,
                     color: theme.beige,
-                    width: '45px',
-                    height: '45px',
+                    width: '48px',
+                    height: '48px',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.1rem',
+                    fontSize: '1.2rem',
                     textDecoration: 'none',
-                    transition: 'all 0.3s ease',
-                    border: `1px solid ${theme.beige}30`
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    border: `1px solid ${theme.beige}30`,
+                    position: 'relative',
+                    overflow: 'hidden'
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = theme.accent;
-                    e.currentTarget.style.transform = 'translateY(-3px)';
-                    e.currentTarget.style.borderColor = theme.accent;
+                    e.currentTarget.style.backgroundColor = social.color;
+                    e.currentTarget.style.transform = 'translateY(-5px) scale(1.1)';
+                    e.currentTarget.style.borderColor = social.color;
+                    e.currentTarget.style.boxShadow = `0 10px 20px ${social.color}40`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = `${theme.beige}15`;
-                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
                     e.currentTarget.style.borderColor = `${theme.beige}30`;
+                    e.currentTarget.style.boxShadow = 'none';
                   }}
                 >
                   {social.icon}
+                  
+                  {/* Tooltip */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '100%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    backgroundColor: theme.charcoal,
+                    color: theme.beige,
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.8rem',
+                    whiteSpace: 'nowrap',
+                    opacity: 0,
+                    visibility: 'hidden',
+                    transition: 'all 0.3s ease',
+                    marginBottom: '8px',
+                    border: `1px solid ${theme.accent}`,
+                    fontFamily: "'Cygre', sans-serif",
+                    fontWeight: 300,
+                    zIndex: 100
+                  }}>
+                    {social.name}
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '0',
+                      height: '0',
+                      borderLeft: '6px solid transparent',
+                      borderRight: '6px solid transparent',
+                      borderTop: `6px solid ${theme.accent}`
+                    }} />
+                  </div>
                 </a>
               ))}
             </div>
@@ -184,19 +265,39 @@ const Footer = () => {
                     alignItems: 'center',
                     gap: '10px',
                     fontFamily: "'Cygre', sans-serif",
-                    fontWeight: 300
+                    fontWeight: 300,
+                    position: 'relative',
+                    paddingLeft: '10px'
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.color = theme.accent;
                     e.currentTarget.style.transform = 'translateX(10px)';
+                    e.currentTarget.style.fontWeight = '500';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = `${theme.beige}cc`;
                     e.currentTarget.style.transform = 'translateX(0)';
+                    e.currentTarget.style.fontWeight = '300';
                   }}
                 >
-                  <FaArrowRight style={{ fontSize: '0.9rem' }} />
+                  <FaArrowRight style={{ 
+                    fontSize: '0.8rem',
+                    transition: 'all 0.3s ease',
+                    opacity: 0.7
+                  }} />
                   {link.name}
+                  
+                  {/* Hover line effect */}
+                  <span style={{
+                    position: 'absolute',
+                    bottom: '-3px',
+                    left: '0',
+                    width: '0',
+                    height: '2px',
+                    backgroundColor: theme.accent,
+                    transition: 'width 0.3s ease',
+                    borderRadius: '1px'
+                  }} />
                 </Link>
               ))}
             </div>
@@ -260,7 +361,8 @@ const Footer = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: '1rem'
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease'
                 }}>
                   <FaPhone style={{ transform: 'scaleX(-1)', fontSize: '1rem' }} />
                 </div>
@@ -303,7 +405,8 @@ const Footer = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: '1rem'
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease'
                 }}>
                   <FaEnvelope />
                 </div>
@@ -348,7 +451,8 @@ const Footer = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
-                  fontSize: '1rem'
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease'
                 }}>
                   <FaMapMarkerAlt />
                 </div>
@@ -453,6 +557,17 @@ const Footer = () => {
           src: url('https://fonts.cdnfonts.com/s/87584/Cygre-Bold.woff') format('woff');
         }
 
+        /* Social icon hover tooltip */
+        a[aria-label]:hover > div {
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+
+        /* Quick link hover line effect */
+        a:hover span:last-child {
+          width: 100% !important;
+        }
+
         /* Responsive styles */
         @media (max-width: 1200px) {
           footer > div {
@@ -461,6 +576,25 @@ const Footer = () => {
           
           footer > div > div:first-child {
             gap: 40px !important;
+          }
+        }
+        
+        @media (max-width: 992px) {
+          footer {
+            padding: 70px 0 25px !important;
+          }
+          
+          footer > div {
+            padding: 0 25px !important;
+          }
+          
+          footer > div > div:first-child {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 50px !important;
+          }
+          
+          footer img {
+            width: 180px !important;
           }
         }
         
@@ -493,9 +627,16 @@ const Footer = () => {
             text-align: center !important;
             gap: 15px !important;
           }
+          
+          /* Social icons responsive */
+          a[aria-label] {
+            width: 44px !important;
+            height: 44px !important;
+            font-size: 1.1rem !important;
+          }
         }
         
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
           footer {
             padding: 50px 0 20px !important;
           }
@@ -512,15 +653,46 @@ const Footer = () => {
             font-size: 0.95rem !important;
           }
           
-          .social-icon {
-            width: 40px !important;
-            height: 40px !important;
+          a[aria-label] {
+            width: 42px !important;
+            height: 42px !important;
+            font-size: 1rem !important;
           }
           
           .contact-icon {
-            width: 35px !important;
-            height: 35px !important;
+            width: 36px !important;
+            height: 36px !important;
             font-size: 0.9rem !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          footer {
+            padding: 40px 0 20px !important;
+          }
+          
+          a[aria-label] {
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 0.9rem !important;
+          }
+          
+          .contact-icon {
+            width: 34px !important;
+            height: 34px !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          a[aria-label] {
+            width: 38px !important;
+            height: 38px !important;
+            font-size: 0.85rem !important;
+          }
+          
+          /* Stack social icons on very small screens */
+          div[style*="gap: '12px'"] {
+            justify-content: center !important;
           }
         }
 
@@ -535,6 +707,19 @@ const Footer = () => {
         /* Ensure links are clickable on mobile */
         a, button {
           touch-action: manipulation;
+        }
+        
+        /* Improve hover effects for mobile */
+        @media (hover: hover) {
+          a:hover, button:hover {
+            cursor: pointer;
+          }
+        }
+        
+        @media (hover: none) {
+          a:active, button:active {
+            opacity: 0.8;
+          }
         }
       `}</style>
     </footer>
